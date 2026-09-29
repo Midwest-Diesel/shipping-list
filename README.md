@@ -11,12 +11,10 @@
 ## Getting Started
 - `git clone git@github.com:Midwest-Diesel/shipping-list.git`
 - `npm install`
-- Create *publish.sh* and *publish.staging.sh* files
+- Create file named *publish.sh*
 - Run the following commands:
   - `chmod +x publish.sh`
-  - `chmod +x publish.staging.sh`
   - `npm run tauri dev`
-  - In a new terminal `npm run dev:test`
 
 ## Publish Changes
 - Publish to production:
