@@ -1,0 +1,167 @@
+.shipping-list {
+  position: relative;
+
+  &__system-btn {
+    padding: 0.3rem 0 0.1rem;
+  }
+
+  &__top-right-buttons {
+    position: absolute;
+    top: 2.3rem;
+    right: 0;
+    display: flex;
+    gap: 0.3rem;
+    
+    img {
+      width: 1rem;
+    }
+  }
+
+  &__top-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    justify-content: center;
+  }
+
+  &__date-buttons {
+    display: flex;
+    gap: 0.3rem;
+  }
+
+  table {
+    color: var(--white-0);
+    font-size: var(--font-xsm);
+  }
+
+  tr, th, td {
+    background-color: rgb(71, 71, 71);
+    padding: 0;
+
+    input {
+      color: var(--white-0);
+    }
+  }
+
+  td {
+    padding: 0 0.2rem;
+  }
+
+  th {
+    padding: 0 0.2rem;
+    background-color: rgb(48, 48, 48);
+  }
+
+  &__section {
+    th {
+      padding: 0.1rem 0.3rem 0.2rem;
+      font-size: var(--font-md);
+      text-align: start;
+      text-decoration: underline;
+    }
+  }
+
+  &__marketing-inputs {
+    max-width: 2rem;
+  }
+
+  &__editing-user {
+    position: absolute;
+    top: 0;
+    right: -0.3rem;
+    background-color: var(--yellow-2);
+    color: black;
+    font-size: var(--font-xsm);
+    padding: 0 0.3rem;
+    font-weight: bold;
+    user-select: none;
+    pointer-events: none;
+    height: 100%;
+  }
+
+  td:has(.shipping-list__editing-user) {
+    border: 3px solid var(--yellow-2);
+  }
+
+  .mini-dialog[open] .shipping-list-row__mini-dialog-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    width: 5.51rem;
+  }
+}
+
+.shipping-list-row {
+  input {
+    padding: 0;
+    margin: 0;
+  }
+
+  &--ups-red {
+    color: #e62929 !important;
+    font-weight: 600;
+  }
+  
+  &--blind {
+    td {
+      background-color: var(--peach-1);
+      color: #943030;
+      font-weight: 600;
+    }
+
+    input {
+      font-weight: 600;
+    }
+  }
+  
+  &--missing-photos {
+    color: black;
+    
+    td {
+      background-color: var(--mint-1);
+    }
+  }
+
+  &--awaiting-payment {
+    color: black;
+
+    td {
+      background-color: var(--yellow-4);
+    }
+  }
+  
+  &--complete {
+    td {
+      font-weight: 900;
+    }
+  
+    input {
+      font-weight: 900;
+    }
+  }
+
+  &__indicator {
+    font-weight: 500;
+    color: var(--orange-1);
+    margin-right: 0.5rem;
+    cursor: pointer;
+  }
+
+  &__menu-btn {
+    background-color: var(--grey-light-1) !important;
+    cursor: pointer;
+
+    p {
+      font-weight: 900;
+      margin-top: -0.5rem;
+    }
+  }
+}
+
+.shipping-list-presentation {
+  &__close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+}
