@@ -7,7 +7,7 @@ import { shippingListDayAtom, shippingListWeekAtom } from "../scripts/atoms/stat
 import { confirm, invoke } from "../scripts/config/tauri";
 import { offServerEvent, onServerEvent, socket } from "@/scripts/config/websockets";
 import { exportShippingList } from "@/scripts/logic/shippingList";
-import { editShippingList, getShippingList } from "@/scripts/services/shippingListService";
+import { addShippingListRow, editShippingList, getShippingList } from "@/scripts/services/shippingListService";
 import { formatDate, formatWeightDims, getDay, parseWeightDims } from "@/scripts/tools/stringUtils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -234,7 +234,33 @@ export default function Home() {
   };
 
   const onClickAddRow = async () => {
-
+    const newRow = {
+      handwrittenId: null,
+      date: new Date(),
+      createdBy: '',
+      shipVia: '',
+      customer: '',
+      shipToContact: null,
+      partNum: null,
+      desc: null,
+      stockNum: null,
+      location: null,
+      mp: 0,
+      br: 0,
+      cap: 0,
+      fl: 0,
+      marketingContact: null,
+      pulled: false,
+      packaged: false,
+      gone: false,
+      ready: false,
+      weightDims: '',
+      scheduled: null,
+      isBlind: false,
+      isMissingPartPhotos: false
+    }
+    await addShippingListRow(newRow);
+    refetch();
   };
 
   const weightDimsRow = data
