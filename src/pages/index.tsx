@@ -8,11 +8,14 @@ import { confirm, invoke } from "../scripts/config/tauri";
 import { offServerEvent, onServerEvent, socket } from "@/scripts/config/websockets";
 import { exportShippingList } from "@/scripts/logic/shippingList";
 import { editShippingList, getShippingList } from "@/scripts/services/shippingListService";
-import { formatDate, getDay, parseWeightDims } from "@/scripts/tools/stringUtils";
+import { formatDate, formatWeightDims, getDay, parseWeightDims } from "@/scripts/tools/stringUtils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import EditWeightDimsDialog from "../components/shippingList/dialogs/EditWeightDimsDialog";
+import { useTooltip } from "@/hooks/useTooltip";
+import EditPartWeightDimsDialog from "@/components/shippingList/dialogs/EditPartWeightDimsDialog";
+import { editWeightDims } from "@/scripts/services/partsService";
 
 
 export default function Home() {
@@ -22,9 +25,11 @@ export default function Home() {
   const [shipViaEdit, setShipViaEdit] = useState<{ row: ShippingListRow, field: 'shipVia' } | null>(null);
   const [editingUser, setEditingUser] = useState<{ id: number, field: keyof ShippingListRow, user: string } | null>(null);
   const [weightDimsEditId, setWeightDimsEditId] = useState<number | null>(null);
+  const [partWeightDimsEditId, setPartWeightDimsEditId] = useState<number | null>(null);
   const [weightDimsVersion, setWeightDimsVersion] = useState(0);
   const [moveRow, setMoveRow] = useState<ShippingListRow | null>(null);
   const queryClient = useQueryClient();
+  const tooltip = useTooltip();
 
   const { data = [], refetch } = useQuery<ShippingListSection[]>({
     queryKey: ['sections', formatDate(date)],
@@ -79,9 +84,9 @@ export default function Home() {
       }
     };
 
-    const onRefreshShippingList = (data: { date: string, socketId: string }) => {
-      if (data.socketId === socket.id) return;
-      if (formatDate(date) !== formatDate(data.date)) return;
+    const onRefreshShippingList = (data?: { date: string, socketId: string }) => {
+      if (data?.socketId === socket.id) return;
+      if (data?.date && formatDate(date) !== formatDate(data?.date)) return;
       refetch();
     };
 
@@ -217,9 +222,28 @@ export default function Home() {
     });
   };
 
+  const onEditPartWeightDims = async (partNum: string, weightDims: WeightDims[]) => {
+    await editWeightDims(partNum, formatWeightDims(weightDims));
+
+    await queryClient.invalidateQueries({
+      queryKey: ['isMissingWeightDims', partNum]
+    });
+    await queryClient.invalidateQueries({
+      queryKey: ['partInfo', partNum]
+    });
+  };
+
+  const onClickAddRow = async () => {
+
+  };
+
   const weightDimsRow = data
     .flatMap((section) => section.rows)
     .find((row) => row.id === weightDimsEditId);
+
+  const partWeightDimsRow = data
+    .flatMap((section) => section.rows)
+    .find((row) => row.id === partWeightDimsEditId);
 
 
   return (
@@ -241,16 +265,43 @@ export default function Home() {
         />
       }
 
+      {partWeightDimsRow &&
+        <EditPartWeightDimsDialog
+          key={`${partWeightDimsRow.id}-${weightDimsVersion}`}
+          row={partWeightDimsRow}
+          setRow={setPartWeightDimsEditId}
+          onEditPartWeightDims={onEditPartWeightDims}
+        />
+      }
+
       <div className="shipping-list">
         <div className="shipping-list__top-right-buttons">
-          <Button variant={['link']}>
+          <Button
+            variant={['link']}
+            onMouseEnter={() => tooltip.set('Presentation')}
+            onMouseLeave={() => tooltip.set('')}
+          >
             <a href={`/presentation?date=${date}`}>
-              <img alt="tv" src="/images/icons/tv.svg" draggable={false} />
+              <img alt="TV" src="/images/icons/tv.svg" draggable={false} />
             </a>
           </Button>
-          <Button onClick={onClickSaveList}>
-            <img alt="save" src="/images/icons/save.svg" draggable={false} />
+
+          <Button
+            onClick={onClickAddRow}
+            onMouseEnter={() => tooltip.set('Add Row')}
+            onMouseLeave={() => tooltip.set('')}
+          >
+            <img alt="Add" src="/images/icons/plus.svg" draggable={false} />
           </Button>
+
+          <Button
+            onClick={onClickSaveList}
+            onMouseEnter={() => tooltip.set('Backup')}
+            onMouseLeave={() => tooltip.set('')}
+          >
+            <img alt="Save" src="/images/icons/save.svg" draggable={false} />
+          </Button>
+
           <Button variant={['link']} className="shipping-list__system-btn">
             <a href="/system">
               <img alt="System" src="/images/icons/gear.svg" draggable={false} />
@@ -291,6 +342,7 @@ export default function Home() {
           refetch={refetch}
           setMoveRow={setMoveRow}
           onEditWeightDims={setWeightDimsEditId}
+          onEditPartWeightDims={setPartWeightDimsEditId}
         />
       </div>
     </Layout>

@@ -1,6 +1,6 @@
 import { Table } from "@midwest-diesel/mwd-ui";
 import ShippingListRowEdit from "./ShippingListRowEdit";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 interface Props {
   sections: ShippingListSection[]
@@ -9,10 +9,14 @@ interface Props {
   refetch: () => void
   setMoveRow: (value: ShippingListRow | null) => void
   onEditWeightDims: (id: number) => void
+  onEditPartWeightDims: (id: number) => void
 }
 
 
-export default function ShippingListTableEdit({ sections, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims }: Props) {
+export default function ShippingListTableEdit({ sections, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims, onEditPartWeightDims }: Props) {
+  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
+
+  
   return (
     <Table variant={['plain']}>
       <thead>
@@ -58,6 +62,9 @@ export default function ShippingListTableEdit({ sections, onEditRow, editingUser
                     refetch={refetch}
                     setMoveRow={setMoveRow}
                     onEditWeightDims={onEditWeightDims}
+                    onEditPartWeightDims={onEditPartWeightDims}
+                    hoveredRow={hoveredRow}
+                    setHoveredRow={setHoveredRow}
                   />
                 );
               })}

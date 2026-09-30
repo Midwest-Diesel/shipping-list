@@ -52,3 +52,21 @@ type WeightDims = {
   width: number
   height: number
 };
+
+type PartInfo = {
+  id: number
+  partNum: string
+  desc: string
+  altParts: string
+  weightDims: string | null
+  prefix: string | null
+  listPrice: number | null
+  remanListPrice: number | null
+  fleetPrice: number | null
+  remanFleetPrice: number | null
+  corePrice: number | null
+  salesNotes: string | null
+  priceLastUpdated: Date | null
+  catDirectPrice: number | null
+  catDirectLastUpdated: Date | null
+};

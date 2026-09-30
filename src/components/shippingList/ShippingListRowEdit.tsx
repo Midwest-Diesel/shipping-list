@@ -5,6 +5,11 @@ import { ask } from "@/scripts/config/tauri";
 import { deleteShippingListRow, editShippingList } from "@/scripts/services/shippingListService";
 import { getRowClasses } from "@/scripts/logic/shippingList";
 import { useTooltip } from "@/hooks/useTooltip";
+import { useQuery } from "@tanstack/react-query";
+import { getPartInfoByPartNum } from "@/scripts/services/partsService";
+import { useAtom } from "jotai";
+import { userAtom } from "@/scripts/atoms/state";
+import { formatShippingListWeightDims } from "@/scripts/tools/stringUtils";
 
 interface Props {
   row: ShippingListRow
@@ -13,14 +18,28 @@ interface Props {
   refetch: () => void
   setMoveRow: (value: ShippingListRow | null) => void
   onEditWeightDims: (id: number) => void
+  onEditPartWeightDims: (id: number) => void
+  hoveredRow: number | null
+  setHoveredRow: (id: number | null) => void
 }
 
 
-export default function ShippingListRow({ row, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims }: Props) {
+export default function ShippingListRow({ row, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims, onEditPartWeightDims, hoveredRow, setHoveredRow }: Props) {
+  const [user] = useAtom<User>(userAtom);
   const [actionButtonsOpen, setActionButtonsOpen] = useState(false);
   const [className, setClassName] = useState('shipping-list-row');
   const tooltip = useTooltip();
-  const isMissingWeightDims = (row.weightDims.reduce((acc, w) => acc + (w.lbs + w.length + w.width + w.height), 0) === 0 && row.shipVia !== 'Will Call');
+  
+  const { data: isMissingWeightDims = false } = useQuery<boolean>({
+    queryKey: ['isMissingWeightDims', row.partNum],
+    queryFn: async () => {
+      if (user.type === 'shop') return false;
+
+      const partInfo = await getPartInfoByPartNum(row.partNum);
+      if (!partInfo || partInfo.weightDims) return false;
+      return true;
+    }
+  });
 
   useEffect(() => {
     setClassName(getRowClasses(row));
@@ -234,18 +253,37 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
           type="checkbox"
         />
       </td>
-      <td style={{ textAlign: 'center', backgroundColor: 'rgb(71, 71, 71)' }}>
-        {isMissingWeightDims &&
-          <span className="shipping-list-row__indicator">{'<!>'}</span> 
+      <td
+        style={{ backgroundColor: 'rgb(71, 71, 71)', color: 'white', whiteSpace: 'pre' }}
+        onMouseEnter={() => setHoveredRow(row.id)}
+        onMouseLeave={() => setHoveredRow(null)}
+      >
+        {user.type !== 'shop' &&
+          <Button
+            style={isMissingWeightDims ? { color: 'var(--orange-1)' } : {}}
+            variant={['xx-small']}
+            className="shipping-list-row__indicator"
+            onMouseEnter={() => tooltip.set('Part Missing Weight/Dims')}
+            onMouseLeave={() => tooltip.set('')}
+            onClick={() => onEditPartWeightDims(row.id)}
+          >
+            Part
+          </Button>
         }
 
-        <Button
-          style={{ backgroundColor: 'var(--grey-light-1)' }}
-          variant={['xx-small']}
-          onClick={() => onEditWeightDims(row.id)}
-        >
-          Edit
-        </Button>
+        {hoveredRow === row.id ?
+          <Button
+            style={{ backgroundColor: 'var(--grey-light-1)' }}
+            variant={['xx-small']}
+            onClick={() => onEditWeightDims(row.id)}
+          >
+            Edit
+          </Button>
+          :
+          <span style={{ display: 'inline-flex', overflow: 'hidden', maxWidth: '8.3rem', fontSize: 'var(--font-xsm)' }}>
+            { formatShippingListWeightDims(row.weightDims).replaceAll('\n', ', ') }
+          </span>
+        }
       </td>
       <td>
         <ShippingListInput row={row} field="handwrittenId" editingUser={editingUser}>

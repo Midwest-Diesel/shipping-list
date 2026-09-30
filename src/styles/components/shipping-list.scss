@@ -141,10 +141,8 @@
   }
 
   &__indicator {
-    font-weight: 500;
-    color: var(--orange-1);
     margin-right: 0.5rem;
-    cursor: pointer;
+    background-color: var(--grey-light-1);
   }
 
   &__menu-btn {
