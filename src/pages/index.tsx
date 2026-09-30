@@ -180,8 +180,22 @@ export default function Home() {
 
   const onClickSaveList = async () => {
     if (!await confirm('Create backup for current week?')) return;
-    
-    const res = await exportShippingList(data, new Date());
+
+    const monday = new Date(date);
+    const day = monday.getDay();
+    monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1));
+
+    const dates = Array.from({ length: 5 }, (_, index) => {
+      const currentDate = new Date(monday);
+      currentDate.setDate(monday.getDate() + index);
+      return currentDate;
+    });
+
+    const sections = (await Promise.all(
+      dates.map((date) => getShippingList(date))
+    )).flat();
+
+    const res = await exportShippingList(sections, date);
     if (!res) return;
 
     const args = { name: res.name, path: res.path };

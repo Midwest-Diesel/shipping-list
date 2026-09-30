@@ -66,19 +66,6 @@ input[type="checkbox"] {
   }
 }
 
-a {
-  color: var(--blue-light-3);
-  text-decoration: none;
-  width: auto;
-  font-weight: normal;
-  text-align: start;
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
 button:disabled:hover {
   color: inherit;
 }
