@@ -44,6 +44,12 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
     refetch();
   };
 
+  const onClickSetMissingPhotos = async () => {
+    setActionButtonsOpen(false);
+    await editShippingList({ ...row, isMissingPartPhotos: !row.isMissingPartPhotos }, 'isMissingPartPhotos');
+    refetch();
+  };
+
   const onClickMoveRow = async () => {
     setActionButtonsOpen(false);
     setMoveRow(row);
@@ -297,6 +303,15 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
                 onMouseLeave={() => tooltip.set('')}
               >
                 <img alt="Blind" src="/images/icons/eye-slash.svg" width={14} height={14} />
+              </Button>
+
+              <Button
+                variant={['x-small', 'fit']}
+                onClick={onClickSetMissingPhotos}
+                onMouseEnter={() => tooltip.set('Missing Photos')}
+                onMouseLeave={() => tooltip.set('')}
+              >
+                <img alt="Blind" src="/images/icons/image.svg" width={14} height={14} />
               </Button>
               
               <Button

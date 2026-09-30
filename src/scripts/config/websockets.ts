@@ -2,6 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 const getUrl = () => {
   if (import.meta.env.PROD) {
+    return 'https://mwd-server-staging.up.railway.app';
     return 'https://inventory-server.up.railway.app';
   } else {
     return 'http://localhost:8000';
