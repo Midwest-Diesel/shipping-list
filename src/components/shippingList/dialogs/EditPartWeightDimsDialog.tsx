@@ -57,6 +57,7 @@ export default function EditPartWeightDimsDialog({ row, setRow, onEditPartWeight
       setOpen={() => setRow(null)}
       width={600}
     >
+      <h4>Handwritten { row.handwrittenId }</h4>
       <Table>
         <thead>
           <tr>

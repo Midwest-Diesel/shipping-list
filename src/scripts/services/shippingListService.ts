@@ -45,14 +45,15 @@ export const getShippingList = async (date: Date): Promise<ShippingListSection[]
 
 // === POST routes === //
 
-export const addShippingListRow = async (row: NewShippingListRow) => {
+export const addShippingListRow = async (row: NewShippingListRow): Promise<number | null> => {
   try {
-    await api.post('/api/shipping-list', { ...row, socketId: socket.id });
+    const res = await api.post('/api/shipping-list', { ...row, socketId: socket.id });
+    return Number(res.data.id);
   } catch (error) {
     handleError(error, 'addShippingListRow');
+    return null;
   }
 };
-
 
 // === PUT routes === //
 

@@ -3,7 +3,7 @@ import { Button } from "@midwest-diesel/mwd-ui";
 import MoveShippingListRowDialog from "../components/shippingList/dialogs/MoveShipppingListRowDialog";
 import ShippingListTableEdit from "../components/shippingList/ShippingListTableEdit";
 import useAutoSave from "@/hooks/useAutoSave";
-import { shippingListDayAtom, shippingListWeekAtom } from "../scripts/atoms/state";
+import { shippingListDayAtom, shippingListWeekAtom, userAtom } from "../scripts/atoms/state";
 import { confirm, invoke } from "../scripts/config/tauri";
 import { offServerEvent, onServerEvent, socket } from "@/scripts/config/websockets";
 import { exportShippingList } from "@/scripts/logic/shippingList";
@@ -19,6 +19,7 @@ import { editWeightDims } from "@/scripts/services/partsService";
 
 
 export default function Home() {
+  const [user] = useAtom<User>(userAtom);
   const [week, setWeek] = useAtom<'Current' | 'Next'>(shippingListWeekAtom);
   const [date, setDate] = useAtom(shippingListDayAtom);
   const [editedRow, setEditedRow] = useState<{ row: ShippingListRow, field: keyof ShippingListRow } | null>(null);
@@ -28,6 +29,7 @@ export default function Home() {
   const [partWeightDimsEditId, setPartWeightDimsEditId] = useState<number | null>(null);
   const [weightDimsVersion, setWeightDimsVersion] = useState(0);
   const [moveRow, setMoveRow] = useState<ShippingListRow | null>(null);
+  const [focusShipViaId, setFocusShipViaId] = useState<number | null>(null);
   const queryClient = useQueryClient();
   const tooltip = useTooltip();
 
@@ -108,6 +110,17 @@ export default function Home() {
 
     return () => clearTimeout(timeout);
   }, [editingUser]);
+
+  useEffect(() => {
+    if (focusShipViaId === null) return;
+
+    requestAnimationFrame(() => {
+      const input = document.querySelector<HTMLInputElement>(`[data-ship-via-id="${focusShipViaId}"]`);
+      input?.focus();
+    });
+
+    setFocusShipViaId(null);
+  }, [data, focusShipViaId]);
 
   useAutoSave(editedRow, async (edited) => {
     if (!edited) return;
@@ -237,7 +250,7 @@ export default function Home() {
     const newRow = {
       handwrittenId: null,
       date,
-      createdBy: '',
+      createdBy: user.initials,
       shipVia: '',
       customer: '',
       shipToContact: null,
@@ -259,7 +272,9 @@ export default function Home() {
       isBlind: false,
       isMissingPartPhotos: false
     }
-    await addShippingListRow(newRow);
+
+    const id = await addShippingListRow(newRow);
+    setFocusShipViaId(id);
     refetch();
   };
 
@@ -284,7 +299,7 @@ export default function Home() {
 
       {weightDimsRow &&
         <EditWeightDimsDialog
-          key={`${weightDimsRow.id}-${weightDimsVersion}`}
+          key={`weight-${weightDimsRow.id}-${weightDimsVersion}`}
           row={weightDimsRow}
           setRow={setWeightDimsEditId}
           onEditWeightDims={onEditWeightDims}
@@ -293,7 +308,7 @@ export default function Home() {
 
       {partWeightDimsRow &&
         <EditPartWeightDimsDialog
-          key={`${partWeightDimsRow.id}-${weightDimsVersion}`}
+          key={`part-weight-${partWeightDimsRow.id}-${weightDimsVersion}`}
           row={partWeightDimsRow}
           setRow={setPartWeightDimsEditId}
           onEditPartWeightDims={onEditPartWeightDims}
@@ -302,15 +317,17 @@ export default function Home() {
 
       <div className="shipping-list">
         <div className="shipping-list__top-right-buttons">
-          <Button
-            variant={['link']}
-            onMouseEnter={() => tooltip.set('Presentation')}
-            onMouseLeave={() => tooltip.set('')}
-          >
-            <a href={`/presentation?date=${date}`}>
-              <img alt="TV" src="/images/icons/tv.svg" draggable={false} />
-            </a>
-          </Button>
+          {user.type !== 'shop' &&
+            <Button
+              variant={['link']}
+              onMouseEnter={() => tooltip.set('Presentation')}
+              onMouseLeave={() => tooltip.set('')}
+            >
+              <a href={`/presentation?date=${date}`}>
+                <img alt="TV" src="/images/icons/tv.svg" draggable={false} />
+              </a>
+            </Button>
+          }
 
           <Button
             onClick={onClickAddRow}
@@ -320,13 +337,15 @@ export default function Home() {
             <img alt="Add" src="/images/icons/plus.svg" draggable={false} />
           </Button>
 
-          <Button
-            onClick={onClickSaveList}
-            onMouseEnter={() => tooltip.set('Backup')}
-            onMouseLeave={() => tooltip.set('')}
-          >
-            <img alt="Save" src="/images/icons/save.svg" draggable={false} />
-          </Button>
+          {user.type !== 'shop' &&
+            <Button
+              onClick={onClickSaveList}
+              onMouseEnter={() => tooltip.set('Backup')}
+              onMouseLeave={() => tooltip.set('')}
+            >
+              <img alt="Save" src="/images/icons/save.svg" draggable={false} />
+            </Button>
+          }
 
           <Button variant={['link']} className="shipping-list__system-btn">
             <a href="/system">
@@ -367,8 +386,14 @@ export default function Home() {
           editingUser={editingUser}
           refetch={refetch}
           setMoveRow={setMoveRow}
-          onEditWeightDims={setWeightDimsEditId}
-          onEditPartWeightDims={setPartWeightDimsEditId}
+          onEditWeightDims={(id) => {
+            setPartWeightDimsEditId(null);
+            setWeightDimsEditId(id);
+          }}
+          onEditPartWeightDims={(id) => {
+            setWeightDimsEditId(null);
+            setPartWeightDimsEditId(id);
+          }}
         />
       </div>
     </Layout>

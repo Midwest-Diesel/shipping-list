@@ -254,11 +254,11 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
         />
       </td>
       <td
-        style={{ backgroundColor: 'rgb(71, 71, 71)', color: 'white', whiteSpace: 'pre' }}
+        className="shipping-list-row__weight-dims"
         onMouseEnter={() => setHoveredRow(row.id)}
         onMouseLeave={() => setHoveredRow(null)}
       >
-        {user.type !== 'shop' &&
+        {(user.type !== 'shop' && row.partNum?.toLowerCase() !== 'multiple') &&
           <Button
             style={isMissingWeightDims ? { color: 'var(--orange-1)' } : {}}
             variant={['xx-small']}
