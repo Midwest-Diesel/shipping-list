@@ -271,7 +271,7 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
             style={isMissingWeightDims ? { color: 'var(--orange-1)' } : {}}
             variant={['xx-small']}
             className="shipping-list-row__indicator"
-            onMouseEnter={() => tooltip.set('Part Missing Weight/Dims')}
+            onMouseEnter={() => tooltip.set('Edit Part Weight/Dims')}
             onMouseLeave={() => tooltip.set('')}
             onClick={() => onEditPartWeightDims(row.id)}
           >

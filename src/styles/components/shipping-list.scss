@@ -129,32 +129,30 @@
       color: #943030;
       font-weight: 600;
     }
-
-    input {
-      font-weight: 600;
-    }
   }
   
   &--missing-photos {
+    color: black;
+
     td, td input {
-      color: black;
       background-color: var(--mint-1);
     }
   }
 
   &--awaiting-payment {
+    color: black;
+
     td, td input {
-      color: black;
       background-color: var(--yellow-4);
+    }
+
+    .dropdown-input {
+      color: black;
     }
   }
   
   &--complete {
-    td {
-      font-weight: 900;
-    }
-  
-    input {
+    td, td input {
       font-weight: 900;
     }
   }
