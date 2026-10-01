@@ -16,6 +16,7 @@ import EditWeightDimsDialog from "../components/shippingList/dialogs/EditWeightD
 import { useTooltip } from "@/hooks/useTooltip";
 import EditPartWeightDimsDialog from "@/components/shippingList/dialogs/EditPartWeightDimsDialog";
 import { editWeightDims } from "@/scripts/services/partsService";
+import useFreightCarriers from "@/hooks/useFreightCarriers";
 
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
   const [focusShipViaId, setFocusShipViaId] = useState<number | null>(null);
   const queryClient = useQueryClient();
   const tooltip = useTooltip();
+  useFreightCarriers();
 
   const { data = [], refetch } = useQuery<ShippingListSection[]>({
     queryKey: ['sections', formatDate(date)],
@@ -114,11 +116,11 @@ export default function Home() {
   useEffect(() => {
     if (focusShipViaId === null) return;
 
-    requestAnimationFrame(() => {
-      const input = document.querySelector<HTMLInputElement>(`[data-ship-via-id="${focusShipViaId}"]`);
-      input?.focus();
-    });
+    const input = document.querySelector<HTMLInputElement>(`[data-ship-via-id="${focusShipViaId}"]`);
+    if (!input) return;
 
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
     setFocusShipViaId(null);
   }, [data, focusShipViaId]);
 

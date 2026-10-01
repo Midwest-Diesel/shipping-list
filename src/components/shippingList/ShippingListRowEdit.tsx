@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, MiniDialog } from "@midwest-diesel/mwd-ui";
+import { Button, DropdownOption, Input, MiniDialog } from "@midwest-diesel/mwd-ui";
 import ShippingListInput from "./ShippingListInput";
 import { ask } from "@/scripts/config/tauri";
 import { deleteShippingListRow, editShippingList } from "@/scripts/services/shippingListService";
@@ -10,6 +10,8 @@ import { getPartInfoByPartNum } from "@/scripts/services/partsService";
 import { useAtom } from "jotai";
 import { userAtom } from "@/scripts/atoms/state";
 import { formatShippingListWeightDims } from "@/scripts/tools/stringUtils";
+import useFreightCarriers from "@/hooks/useFreightCarriers";
+import { InputDropdown } from "../library/InputDropdown";
 
 interface Props {
   row: ShippingListRow
@@ -28,6 +30,7 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
   const [user] = useAtom<User>(userAtom);
   const [actionButtonsOpen, setActionButtonsOpen] = useState(false);
   const [className, setClassName] = useState('shipping-list-row');
+  const { freightCarriers } = useFreightCarriers();
   const tooltip = useTooltip();
   
   const { data: isMissingWeightDims = false } = useQuery<boolean>({
@@ -97,14 +100,19 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
       </td>
       <td>
         <ShippingListInput row={row} field="shipVia" editingUser={editingUser}>
-          <Input
-            className={row.shipVia === 'UPS Red' ? 'shipping-list-row--ups-red' : ''}
-            style={{ margin: '0' }}
-            variant={['no-style']}
+          <InputDropdown
+            className={row.shipVia.includes('UPS Red') ? 'shipping-list-row--ups-red' : ''}
             value={row.shipVia ?? ''}
-            onChange={(e) => onEditRow(row.id, 'shipVia', e.target.value)}
+            onChange={(value) => onEditRow(row.id, 'shipVia', value)}
+            maxHeight="20rem"
             data-ship-via-id={row.id}
-          />
+          >
+            {freightCarriers.map((carrier) => {
+              return (
+                <DropdownOption value={carrier.name}>{ carrier.name }</DropdownOption>
+              );
+            })}
+          </InputDropdown>
         </ShippingListInput>
       </td>
       <td>

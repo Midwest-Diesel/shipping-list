@@ -91,6 +91,25 @@
   }
 }
 
+.dropdown-input {
+  color: white;
+
+  li {
+    color: black !important;
+    font-weight: normal;
+  }
+
+  &__container {
+    margin: 0;
+    height: fit-content;
+  }
+
+  input {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
 .shipping-list-row {
   input {
     padding: 0;
@@ -98,12 +117,14 @@
   }
 
   &--ups-red {
-    color: #e62929 !important;
-    font-weight: 600;
+    * {
+      color: #e62929 !important;
+      font-weight: 600;
+    }
   }
   
   &--blind {
-    td {
+    td, td input {
       background-color: var(--peach-1);
       color: #943030;
       font-weight: 600;
@@ -115,17 +136,15 @@
   }
   
   &--missing-photos {
-    color: black;
-    
-    td {
+    td, td input {
+      color: black;
       background-color: var(--mint-1);
     }
   }
 
   &--awaiting-payment {
-    color: black;
-
-    td {
+    td, td input {
+      color: black;
       background-color: var(--yellow-4);
     }
   }

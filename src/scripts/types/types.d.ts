@@ -70,3 +70,10 @@ type PartInfo = {
   catDirectPrice: number | null
   catDirectLastUpdated: Date | null
 };
+
+type FreightCarrier = {
+  id: number
+  name: string
+  type: string
+  isSkidRateApplied: boolean
+};
