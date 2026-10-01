@@ -46,8 +46,8 @@ export default function MoveShippingListRowDialog({ row, setRow, refetch }: Prop
       />
 
       <div className="form__footer">
-        <Button onClick={onClickConfirm}>Confirm</Button>
         <Button variant={['red-color']} onClick={onClickCancel}>Cancel</Button>
+        <Button onClick={onClickConfirm}>Confirm</Button>
       </div>
     </Dialog>
   );

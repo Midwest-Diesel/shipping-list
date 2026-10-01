@@ -280,7 +280,7 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
             Edit
           </Button>
           :
-          <span style={{ display: 'inline-flex', overflow: 'hidden', maxWidth: '8.3rem', fontSize: 'var(--font-xsm)' }}>
+          <span style={{ display: 'inline-flex', overflow: 'hidden', width: '8.3rem', fontSize: 'var(--font-xsm)' }}>
             { formatShippingListWeightDims(row.weightDims).replaceAll('\n', ', ') }
           </span>
         }

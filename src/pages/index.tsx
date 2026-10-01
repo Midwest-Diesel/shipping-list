@@ -236,7 +236,7 @@ export default function Home() {
   const onClickAddRow = async () => {
     const newRow = {
       handwrittenId: null,
-      date: new Date(),
+      date,
       createdBy: '',
       shipVia: '',
       customer: '',
