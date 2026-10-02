@@ -20,18 +20,6 @@ export default function ShippingListTable({ sections }: Props) {
           <th>Description</th>
           <th>Stock #</th>
           <th>Location</th>
-          <th>MP</th>
-          <th>BR</th>
-          <th>CAP</th>
-          <th>FL</th>
-          <th>Attn To</th>
-          <th>Pulled</th>
-          <th>Packaged</th>
-          <th>Gone</th>
-          <th>Ready</th>
-          <th>Weight/Dims</th>
-          <th>Handwritten</th>
-          <th>Scheduled</th>
         </tr>
       </thead>
       <tbody>
