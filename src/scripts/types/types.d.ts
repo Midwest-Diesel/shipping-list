@@ -37,6 +37,7 @@ type ShippingListRow = {
   weightDims: WeightDims[]
   scheduled: string | null
   awaitingPayment: boolean
+  shipDocs: boolean
   isComplete: boolean
   isBlind: boolean
   isMissingPartPhotos: boolean

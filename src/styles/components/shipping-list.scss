@@ -139,6 +139,18 @@
     }
   }
 
+  &--ship-docs {
+    color: black;
+
+    td, td input {
+      background-color: var(--purple-3);
+    }
+
+    .dropdown-input {
+      color: black;
+    }
+  }
+
   &--awaiting-payment {
     color: black;
 

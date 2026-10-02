@@ -54,6 +54,12 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
     refetch();
   };
 
+  const onClickSetMissingShipDocs = async () => {
+    setActionButtonsOpen(false);
+    await editShippingList({ ...row, shipDocs: !row.shipDocs }, 'shipDocs');
+    refetch();
+  };
+
   const onClickCompleteRow = async () => {
     setActionButtonsOpen(false);
     await editShippingList({ ...row, isComplete: !row.isComplete }, 'isComplete');
@@ -357,7 +363,16 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
                 onMouseEnter={() => tooltip.set('Missing Photos')}
                 onMouseLeave={() => tooltip.set('')}
               >
-                <img alt="Blind" src="/images/icons/image.svg" width={14} height={14} />
+                <img alt="Missing Photos" src="/images/icons/image.svg" width={14} height={14} />
+              </Button>
+
+              <Button
+                variant={['x-small', 'fit']}
+                onClick={onClickSetMissingShipDocs}
+                onMouseEnter={() => tooltip.set('Missing Ship Docs')}
+                onMouseLeave={() => tooltip.set('')}
+              >
+                <img alt="Missing Ship Docs" src="/images/icons/ship-docs.svg" width={14} height={14} />
               </Button>
               
               <Button

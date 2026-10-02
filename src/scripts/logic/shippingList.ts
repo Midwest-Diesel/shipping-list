@@ -118,6 +118,7 @@ const formatISODate = (date: Date) => {
 
 export const getRowClasses = (row: ShippingListRow): string => {
   const classes = ['shipping-list-row'];
+  if (row.shipDocs) classes.push('shipping-list-row--ship-docs');
   if (row.awaitingPayment) classes.push('shipping-list-row--awaiting-payment');
   if (row.isBlind) classes.push('shipping-list-row--blind');
   if (row.isMissingPartPhotos) classes.push('shipping-list-row--missing-photos');
