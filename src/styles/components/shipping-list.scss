@@ -137,6 +137,10 @@
     td, td input {
       background-color: var(--mint-1);
     }
+
+    .dropdown-input {
+      color: black;
+    }
   }
 
   &--ship-docs {
@@ -194,7 +198,7 @@
 }
 
 .shipping-list-presentation {
-  zoom: 1.6;
+  zoom: 1.8;
 
   &__close-btn {
     position: absolute;
