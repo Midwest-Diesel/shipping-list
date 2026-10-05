@@ -20,6 +20,7 @@ export default function GlobalData({ children }: Props) {
   const [loaded, setLoaded] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [updateNotes, setUpdateNotes] = useState('');
+  const [theme] = useState<Theme>(localStorage.getItem('theme') as Theme ?? 'dark');
 
   useEffect(() => {
     checkForUpdates();
@@ -45,6 +46,14 @@ export default function GlobalData({ children }: Props) {
       document.removeEventListener('auxclick', handleMiddleClick);
     };
   }, []);
+
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [theme]);
 
   const handleGetUser = async () => {
     const res = await getUser();

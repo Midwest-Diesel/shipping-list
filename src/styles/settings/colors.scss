@@ -46,6 +46,10 @@
   --purple-3: #ad8fff;
 
   --bg-color-1: var(--grey-dark-1);
+  --text-color-1: white;
+  --text-color-2: rgb(192, 192, 192);
+  --border-color-1: #d0d0d0;
+  --scrollbar-track: var(--grey-dark-3);
 
   --status-ziegler: var(--purple-1);
   --status-new: var(--blue-light-1);
@@ -57,4 +61,12 @@
   --status-sold: var(--red-2);
   --status-hold: var(--orange-1);
   --status-humpy: var(--orange-1);
+}
+
+:root.light {
+  --bg-color-1: #f5f5f5;
+  --text-color-1: #252525;
+  --text-color-2: #424242;
+  --border-color-1: #d0d0d0;
+  --scrollbar-track: #e5e5e5;
 }

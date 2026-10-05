@@ -3,14 +3,14 @@
 * {
   box-sizing: border-box;
   scrollbar-width: auto;
-  scrollbar-color: #efb312 #424242;
+  scrollbar-color: #efb312 var(--scrollbar-track);
 
   &::-webkit-scrollbar {
     width: 15px;
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--grey-dark-3);
+    background: var(--scrollbar-track);
   }
 
   &::-webkit-scrollbar-thumb {
@@ -26,7 +26,7 @@
 
 body {
   background-color: var(--bg-color-1);
-  color: white;
+  color: var(--text-color-1);
   min-height: 100vh;
   height: 100vh;
   padding: 0;
@@ -84,7 +84,7 @@ button:disabled:hover {
 }
 
 .print-placeholder {
-  color: var(--grey-light-2);
+  color: var(--text-color-2);
 }
 
 @media print {
@@ -106,4 +106,8 @@ button:disabled:hover {
   .navbar, button, .header__btn-container, .no-print {
     display: none;
   }
+}
+
+.table th {
+  color: white;
 }

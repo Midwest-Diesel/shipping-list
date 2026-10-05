@@ -1,3 +1,5 @@
+type Theme = 'light' | 'dark';
+
 type User = {
   id: number
   username: string

@@ -14,6 +14,7 @@ export default function System() {
   const [user] = useAtom<User>(userAtom);
   const [version, setVersion] = useState('0.0.0');
   const [status, setStatus] = useState('');
+  const [theme, setTheme] = useState<Theme>(localStorage.getItem('theme') as Theme ?? 'dark');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +39,18 @@ export default function System() {
     }
   };
 
+  const onClickChangeTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+
+    if (newTheme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  };
+
   
   return (
     <Layout title="System">
@@ -51,6 +64,7 @@ export default function System() {
 
         <h3>v{ version }</h3>
         <p className="system-page__username">Logged in as <span>{ cap(user.username) }</span></p>
+        <Button variant={['fit']} onClick={onClickChangeTheme}>{ theme === 'dark' ? 'Light' : 'Dark'} Mode</Button>
         { !status && <Button variant={['fit']} onClick={checkForUpdates}>Check For Updates</Button> }
         { status && <p className="system-page__status-text">{ status }</p> }
         
