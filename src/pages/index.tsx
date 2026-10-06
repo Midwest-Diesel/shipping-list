@@ -22,7 +22,7 @@ import useFreightCarriers from "@/hooks/useFreightCarriers";
 export default function Home() {
   const [user] = useAtom<User>(userAtom);
   const [week, setWeek] = useAtom<'Current' | 'Next'>(shippingListWeekAtom);
-  const [date, setDate] = useAtom(shippingListDayAtom);
+  const [date, setDate] = useAtom<Date>(shippingListDayAtom);
   const [editedRow, setEditedRow] = useState<{ row: ShippingListRow, field: keyof ShippingListRow } | null>(null);
   const [shipViaEdit, setShipViaEdit] = useState<{ row: ShippingListRow, field: 'shipVia' } | null>(null);
   const [editingUser, setEditingUser] = useState<{ id: number, field: keyof ShippingListRow, user: string } | null>(null);
@@ -303,7 +303,7 @@ export default function Home() {
 
 
   return (
-    <Layout title="Shipping List">
+    <Layout>
       {moveRow &&
         <MoveShippingListRowDialog
           row={moveRow}

@@ -10,3 +10,4 @@ export const tooltipAtom = atom<string>('');
 export const shippingListWeekAtom = atom<'Current' | 'Next'>('Current');
 export const shippingListDayAtom = atom(new Date());
 export const freightCarriersAtom = atom<FreightCarrier[]>([]);
+export const shippingListIncomingAtom = atom<'past' | 'current'>('current');

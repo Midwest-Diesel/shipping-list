@@ -45,6 +45,18 @@ type ShippingListRow = {
   isMissingPartPhotos: boolean
 };
 
+type IncomingRow = {
+  id: number
+  date: Date | null
+  pickedUp: boolean
+  shipVia: string | null
+  company: string | null
+  trackingNumber: string | null
+  received: boolean
+  estimatedDeliveryDate: Date | null
+  notes: string | null
+};
+
 type WeightDimsType = 'Small Pack' | 'LTL';
 
 type WeightDims = {

@@ -1,6 +1,6 @@
 import api from "../config/axios";
 import { socket } from "../config/websockets";
-import { formatWeightDims, parseWeightDims } from "../tools/stringUtils";
+import { formatWeightDims, parseResDate, parseWeightDims } from "../tools/stringUtils";
 import { handleError } from "../tools/utils";
 
 interface NewShippingListRow {
@@ -43,6 +43,17 @@ export const getShippingList = async (date: Date): Promise<ShippingListSection[]
   }
 };
 
+export const getIncomingRow = async (params: { received: boolean, page: number, limit: number }): Promise<{ pageCount: number, rows: IncomingRow[] }> => {
+  try {
+    const res = await api.get('/api/shipping-list/incoming', { params: { ...params, page: (params.page - 1) * params.limit } });
+    const rows = res.data.rows.map((row: any) => ({ ...row, date: parseResDate(row.date), estimatedDeliveryDate: parseResDate(row.estimatedDeliveryDate) }));
+    return { pageCount: res.data.pageCount, rows };
+  } catch (error) {
+    handleError(error, 'getIncomingRow');
+    return { pageCount: 0, rows: [] };
+  }
+};
+
 // === POST routes === //
 
 export const addShippingListRow = async (row: NewShippingListRow): Promise<number | null> => {
@@ -63,6 +74,14 @@ export const editShippingList = async (row: ShippingListRow, field: keyof Shippi
     await api.put('/api/shipping-list', { ...payload, field, socketId: socket.id });
   } catch (error) {
     handleError(error, 'editShippingList');
+  }
+};
+
+export const editIncomingRow = async (row: IncomingRow, field: keyof IncomingRow) => {
+  try {
+    await api.put('/api/shipping-list/incoming', { ...row, field, socketId: socket.id });
+  } catch (error) {
+    handleError(error, 'editIncomingRow');
   }
 };
 

@@ -36,7 +36,7 @@ body {
 }
 
 .layout__main-content {
-  padding: 1rem;
+  padding: 0 1rem;
 }
 
 h1 {
@@ -110,4 +110,26 @@ button:disabled:hover {
 
 .tooltip {
   color: white;
+}
+
+.pagination {
+  box-shadow: none;
+  
+  button {
+    font-size: var(--font-xsm);
+    padding: 0.2rem 0.3rem;
+  }
+}
+
+:root.light {
+  a {
+    color: var(--blue-dark-1);
+  }
+
+  .pagination {
+    background-color: var(--table-header-highlight);
+    color: black;
+    border: solid 2px black;
+    border-top: none;
+  }
 }

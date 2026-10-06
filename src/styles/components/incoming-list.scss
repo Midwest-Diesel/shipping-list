@@ -1,0 +1,35 @@
+.incoming-list {
+  &__top-buttons {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+    justify-content: center;
+  }
+
+  table {
+    color: var(--table-header-color);
+    font-size: var(--font-xsm);
+  }
+
+  tr, th, td {
+    background-color: var(--table-row-highlight);
+    padding: 0;
+
+    input {
+      color: var(--white-0);
+    }
+  }
+
+  td {
+    padding: 0.2rem;
+  }
+
+  th {
+    padding: 0 0.2rem;
+    background-color: var(--table-header-highlight);
+  }
+
+  td:has(.shipping-list__editing-user) {
+    border: 3px solid var(--yellow-2);
+  }
+}

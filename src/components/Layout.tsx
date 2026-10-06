@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import Navbar from "./Navbar";
 
 interface Props {
   children: React.ReactNode
@@ -7,8 +8,7 @@ interface Props {
 
 
 export function Layout({ children, title }: Props) {
-  const isStaging = import.meta.env.TAURI_DEBUG === 'true';
-  const baseTitle = isStaging ? 'Inventory (staging)' : 'Inventory';
+  const baseTitle = 'Shipping List';
 
   useEffect(() => {
     document.title = title ? `${title} | ${baseTitle}` : baseTitle;
@@ -30,7 +30,8 @@ export function Layout({ children, title }: Props) {
               <strong>DEVELOPMENT</strong>
             </p>
           }
-          
+
+          <Navbar />
           { children }
         </div>
       </div>
