@@ -5,7 +5,7 @@
     padding: 0.3rem 0 0.1rem;
   }
 
-  &__top-right-buttons {
+  &__top-right-buttons, &__top-left-buttons {
     position: absolute;
     top: 2.3rem;
     right: 0;
@@ -14,6 +14,15 @@
     
     img {
       width: 1rem;
+    }
+  }
+
+  &__top-left-buttons {
+    left: 0;
+    right: auto;
+
+    h4 {
+      align-self: center;
     }
   }
 
@@ -205,5 +214,21 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
+  }
+
+  &__top-left-buttons {
+    position: absolute;
+    top: 0.5rem;
+    left: 0;
+    display: flex;
+    gap: 0.3rem;
+    
+    img {
+      width: 1rem;
+    }
+
+    h4 {
+      align-self: center;
+    }
   }
 }

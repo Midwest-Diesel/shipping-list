@@ -31,6 +31,7 @@ export default function Home() {
   const [weightDimsVersion, setWeightDimsVersion] = useState(0);
   const [moveRow, setMoveRow] = useState<ShippingListRow | null>(null);
   const [focusShipViaId, setFocusShipViaId] = useState<number | null>(null);
+  const [zoom, setZoom] = useState(Number(localStorage.getItem('zoom') || 1));
   const queryClient = useQueryClient();
   const tooltip = useTooltip();
   useFreightCarriers();
@@ -280,6 +281,18 @@ export default function Home() {
     refetch();
   };
 
+  const onClickZoomOut = () => {
+    const newZoom = Math.max(0.5, zoom - 0.1);
+    setZoom(newZoom);
+    localStorage.setItem('zoom', newZoom.toString());
+  };
+
+  const onClickZoomIn = () => {
+    const newZoom = Math.min(2, zoom + 0.1);
+    setZoom(newZoom);
+    localStorage.setItem('zoom', newZoom.toString());
+  };
+
   const weightDimsRow = data
     .flatMap((section) => section.rows)
     .find((row) => row.id === weightDimsEditId);
@@ -318,6 +331,16 @@ export default function Home() {
       }
 
       <div className="shipping-list">
+        <div className="shipping-list__top-left-buttons">
+          <Button onClick={onClickZoomOut}>
+            <img alt="Zoom out" src="/images/icons/zoom-out.svg" draggable={false} />
+          </Button>
+          <Button onClick={onClickZoomIn}>
+            <img alt="Zoom in" src="/images/icons/zoom-in.svg" draggable={false} />
+          </Button>
+          <h4>{ Math.round(zoom * 100) }%</h4>
+        </div>
+
         <div className="shipping-list__top-right-buttons">
           {user.type !== 'shop' &&
             <Button
@@ -382,21 +405,23 @@ export default function Home() {
           Shipping List ({ getDay(date) } { formatDate(date) })
         </h2>
         
-        <ShippingListTableEdit
-          sections={data}
-          onEditRow={onEditRow}
-          editingUser={editingUser}
-          refetch={refetch}
-          setMoveRow={setMoveRow}
-          onEditWeightDims={(id) => {
-            setPartWeightDimsEditId(null);
-            setWeightDimsEditId(id);
-          }}
-          onEditPartWeightDims={(id) => {
-            setWeightDimsEditId(null);
-            setPartWeightDimsEditId(id);
-          }}
-        />
+        <div style={{ zoom }}>
+          <ShippingListTableEdit
+            sections={data}
+            onEditRow={onEditRow}
+            editingUser={editingUser}
+            refetch={refetch}
+            setMoveRow={setMoveRow}
+            onEditWeightDims={(id) => {
+              setPartWeightDimsEditId(null);
+              setWeightDimsEditId(id);
+            }}
+            onEditPartWeightDims={(id) => {
+              setWeightDimsEditId(null);
+              setPartWeightDimsEditId(id);
+            }}
+          />
+        </div>
       </div>
     </Layout>
   );

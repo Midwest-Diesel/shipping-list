@@ -154,7 +154,7 @@ export function InputDropdown({ children, className = '', variant = [], label = 
             className="dropdown-input__menu"
             style={{
               minWidth,
-              visibility: isOpen ? "visible" : "hidden",
+              visibility: (isOpen && filteredOptions.length > 0) ? "visible" : "hidden",
               opacity: isOpen ? 1 : 0,
               pointerEvents: isOpen ? "auto" : "none"
             }}
