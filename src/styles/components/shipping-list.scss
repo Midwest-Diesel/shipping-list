@@ -39,12 +39,12 @@
   }
 
   table {
-    color: var(--white-0);
+    color: var(--table-header-color);
     font-size: var(--font-xsm);
   }
 
   tr, th, td {
-    background-color: rgb(71, 71, 71);
+    background-color: var(--table-row-highlight);
     padding: 0;
 
     input {
@@ -58,7 +58,7 @@
 
   th {
     padding: 0 0.2rem;
-    background-color: rgb(48, 48, 48);
+    background-color: var(--table-header-highlight);
   }
 
   &__section {
@@ -117,6 +117,10 @@
     background-color: transparent;
     box-shadow: none;
   }
+}
+
+:root.light .dropdown-input {
+  color: black;
 }
 
 .shipping-list-row {
