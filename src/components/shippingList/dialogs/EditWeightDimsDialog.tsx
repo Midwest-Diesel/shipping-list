@@ -65,6 +65,7 @@ export default function EditWeightDimsDialog({ row, setRow, onEditWeightDims }: 
                     value={r.lbs}
                     type="number"
                     onChange={(e) => onChange(i, 'lbs', e.target.value)}
+                    onFocus={(e) => e.target.select()}
                   />
                 </td>
  
@@ -74,6 +75,7 @@ export default function EditWeightDimsDialog({ row, setRow, onEditWeightDims }: 
                     value={r.length}
                     type="number"
                     onChange={(e) => onChange(i, 'length', e.target.value)}
+                    onFocus={(e) => e.target.select()}
                   />
                 </td>
  
@@ -83,6 +85,7 @@ export default function EditWeightDimsDialog({ row, setRow, onEditWeightDims }: 
                     value={r.width}
                     type="number"
                     onChange={(e) => onChange(i, 'width', e.target.value)}
+                    onFocus={(e) => e.target.select()}
                   />
                 </td>
  
@@ -92,6 +95,7 @@ export default function EditWeightDimsDialog({ row, setRow, onEditWeightDims }: 
                     value={r.height}
                     type="number"
                     onChange={(e) => onChange(i, 'height', e.target.value)}
+                    onFocus={(e) => e.target.select()}
                   />
                 </td>
  
