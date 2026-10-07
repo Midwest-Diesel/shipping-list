@@ -139,6 +139,26 @@
     margin: 0;
   }
 
+  &__order-buttons {
+    position: absolute;
+    left: 0.2rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1;
+
+    button {
+      padding: 0;
+      height: 0.6rem;
+      background-color: transparent;
+      box-shadow: none;
+    }
+
+    img {
+      margin-bottom: 0.3rem;
+    }
+  }
+
   &--ups-red {
     * {
       color: #e62929 !important;

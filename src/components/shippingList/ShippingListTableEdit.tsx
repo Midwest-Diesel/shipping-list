@@ -10,11 +10,12 @@ interface Props {
   setMoveRow: (value: ShippingListRow | null) => void
   onEditWeightDims: (id: number) => void
   onEditPartWeightDims: (id: number) => void
+  onReorder: (sectionIndex: number, fromId: number, toId: number) => void
 }
 
 
-export default function ShippingListTableEdit({ sections, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims, onEditPartWeightDims }: Props) {
-  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
+export default function ShippingListTableEdit({ sections, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims, onEditPartWeightDims, onReorder }: Props) {
+  const [hoveredWeightDimsId, setHoveredWeightDimsId] = useState<number | null>(null);
 
   
   return (
@@ -54,7 +55,7 @@ export default function ShippingListTableEdit({ sections, onEditRow, editingUser
                 { section.name && <th colSpan={21}>{ section.name }</th> }
               </tr>
 
-              {section.rows.map((row) => {
+              {section.rows.map((row, index) => {
                 return (
                   <ShippingListRowEdit
                     key={row.id}
@@ -65,8 +66,11 @@ export default function ShippingListTableEdit({ sections, onEditRow, editingUser
                     setMoveRow={setMoveRow}
                     onEditWeightDims={onEditWeightDims}
                     onEditPartWeightDims={onEditPartWeightDims}
-                    hoveredRow={hoveredRow}
-                    setHoveredRow={setHoveredRow}
+                    hoveredWeightDimsId={hoveredWeightDimsId}
+                    setHoveredWeightDimsId={setHoveredWeightDimsId}
+                    onReorder={(fromId, toId) => onReorder(i, fromId, toId)}
+                    previousRow={section.rows[index - 1] ?? null}
+                    nextRow={section.rows[index + 1] ?? null}
                   />
                 );
               })}

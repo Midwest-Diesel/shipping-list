@@ -21,15 +21,18 @@ interface Props {
   setMoveRow: (value: ShippingListRow | null) => void
   onEditWeightDims: (id: number) => void
   onEditPartWeightDims: (id: number) => void
-  hoveredRow: number | null
-  setHoveredRow: (id: number | null) => void
+  hoveredWeightDimsId: number | null
+  setHoveredWeightDimsId: (id: number | null) => void
+  onReorder: (fromId: number, toId: number) => void
+  previousRow: ShippingListRow | null
+  nextRow: ShippingListRow | null
 }
 
 
-export default function ShippingListRow({ row, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims, onEditPartWeightDims, hoveredRow, setHoveredRow }: Props) {
+export default function ShippingListRow({ row, onEditRow, editingUser, refetch, setMoveRow, onEditWeightDims, onEditPartWeightDims, hoveredWeightDimsId, setHoveredWeightDimsId, onReorder, previousRow, nextRow }: Props) {
   const [user] = useAtom<User>(userAtom);
-  const [actionButtonsOpen, setActionButtonsOpen] = useState(false);
   const [className, setClassName] = useState('shipping-list-row');
+  const [actionButtonsOpen, setActionButtonsOpen] = useState(false);
   const { freightCarriers } = useFreightCarriers();
   const tooltip = useTooltip();
   
@@ -94,7 +97,29 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
 
   return (
     <tr style={{ position: 'relative' }} className={className}>
-      <td>
+      <td style={{ paddingLeft: '1.3rem' }}>
+        <div className="shipping-list-row__order-buttons">
+          <Button
+            disabled={!previousRow}
+            onClick={() => {
+              if (!previousRow) return;
+              onReorder(row.id, previousRow.id);
+            }}
+          >
+            <img alt="Up" src="/images/icons/caret-up.svg" width={10} height={10} draggable={false} />
+          </Button>
+          
+          <Button
+            disabled={!nextRow}
+            onClick={() => {
+              if (!nextRow) return;
+              onReorder(row.id, nextRow.id);
+            }}
+          >
+            <img alt="Down" src="/images/icons/caret-down.svg" width={10} height={10} draggable={false} />
+          </Button>
+        </div>
+
         <ShippingListInput row={row} field="createdBy" editingUser={editingUser}>
           <Input
             style={{ margin: '0' }}
@@ -269,8 +294,8 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
       </td>
       <td
         className="shipping-list-row__weight-dims"
-        onMouseEnter={() => setHoveredRow(row.id)}
-        onMouseLeave={() => setHoveredRow(null)}
+        onMouseEnter={() => setHoveredWeightDimsId(row.id)}
+        onMouseLeave={() => setHoveredWeightDimsId(null)}
       >
         {(user.type !== 'shop' && row.partNum?.toLowerCase() !== 'multiple') &&
           <Button
@@ -285,7 +310,7 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
           </Button>
         }
 
-        {hoveredRow === row.id ?
+        {hoveredWeightDimsId === row.id ?
           <Button
             style={{ backgroundColor: 'var(--grey-light-1)' }}
             variant={['xx-small']}

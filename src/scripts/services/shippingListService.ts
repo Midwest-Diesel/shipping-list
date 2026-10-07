@@ -94,6 +94,14 @@ export const editIncomingRow = async (row: IncomingRow, field: keyof IncomingRow
   }
 };
 
+export const editShippingListOrder = async (rows: { id: number, order: number }[]) => {
+  try {
+    await api.put('/api/shipping-list/order', { rows, socketId: socket.id });
+  } catch (error) {
+    handleError(error, 'editShippingListOrder');
+  }
+};
+
 // === PATCH routes === //
 
 export const editShippingListRowCompleted = async (handwrittenId: number, isComplete: boolean) => {

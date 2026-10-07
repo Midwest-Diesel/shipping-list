@@ -43,6 +43,7 @@ type ShippingListRow = {
   isComplete: boolean
   isBlind: boolean
   isMissingPartPhotos: boolean
+  order: number
 };
 
 type IncomingRow = {

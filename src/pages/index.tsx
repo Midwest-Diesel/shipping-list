@@ -7,7 +7,7 @@ import { shippingListDayAtom, shippingListWeekAtom, userAtom } from "../scripts/
 import { confirm, invoke } from "../scripts/config/tauri";
 import { offServerEvent, onServerEvent, socket } from "@/scripts/config/websockets";
 import { exportShippingList } from "@/scripts/logic/shippingList";
-import { addShippingListRow, editShippingList, getShippingList } from "@/scripts/services/shippingListService";
+import { addShippingListRow, editShippingList, editShippingListOrder, getShippingList } from "@/scripts/services/shippingListService";
 import { formatDate, formatWeightDims, getDay, parseWeightDims } from "@/scripts/tools/stringUtils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -142,6 +142,34 @@ export default function Home() {
       input?.setSelectionRange(input.value.length, input.value.length);
     });
   }, { delay: 500 });
+
+  const onReorder = async (sectionIndex: number, fromId: number, toId: number) => {
+    const currentSections = queryClient.getQueryData<ShippingListSection[]>(['sections', formatDate(date)]);
+    if (!currentSections) return;
+
+    const section = currentSections[sectionIndex];
+    if (!section) return;
+
+    const fromIndex = section.rows.findIndex((row) => row.id === fromId);
+    const toIndex = section.rows.findIndex((row) => row.id === toId);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    const rows = [...section.rows];
+    const [movedRow] = rows.splice(fromIndex, 1);
+    rows.splice(toIndex, 0, movedRow);
+
+    const orderedRows = rows.map((row, index) => ({ ...row, order: index + 1 }));
+    const newSections = [...currentSections];
+    newSections[sectionIndex] = { ...section, rows: orderedRows };
+
+    queryClient.setQueryData<ShippingListSection[]>(
+      ['sections', formatDate(date)],
+      newSections
+    );
+
+    const newRows = orderedRows.map((row) => ({ id: row.id, order: row.order }));
+    await editShippingListOrder(newRows);
+  };
 
   const onClickChangeWeek = () => {
     const days = week === 'Next' ? -7 : 7;
@@ -414,6 +442,7 @@ export default function Home() {
               setWeightDimsEditId(null);
               setPartWeightDimsEditId(id);
             }}
+            onReorder={onReorder}
           />
         </div>
       </div>
