@@ -126,6 +126,10 @@ button:disabled:hover {
     color: var(--blue-dark-1);
   }
 
+  button a {
+    color: inherit;
+  }
+
   .pagination {
     background-color: var(--table-header-highlight);
     color: black;

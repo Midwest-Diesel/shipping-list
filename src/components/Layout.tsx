@@ -26,7 +26,17 @@ export function Layout({ children, title }: Props) {
       <div className="layout__container">
         <div className="layout__main-content">
           {import.meta.env.DEV &&
-            <p style={{ position: 'fixed', right: '0.2rem', top: '0.2rem', backgroundColor: 'var(--purple-1)', padding: '0 0.3rem 0.1rem', borderRadius: '0.3rem' }}>
+            <p
+              style={{
+                position: 'fixed',
+                right: '0.2rem',
+                top: '0.2rem',
+                backgroundColor: 'var(--purple-1)',
+                padding: '0 0.3rem 0.1rem',
+                borderRadius: '0.3rem',
+                color: 'white'
+              }}
+            >
               <strong>DEVELOPMENT</strong>
             </p>
           }

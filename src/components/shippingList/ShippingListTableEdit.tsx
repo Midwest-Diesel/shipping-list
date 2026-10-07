@@ -48,6 +48,8 @@ export default function ShippingListTableEdit({ sections, onEditRow, editingUser
         {sections.map((section, i) => {
           return (
             <Fragment key={i}>
+              { i > 0 && <tr className="shipping-list__section-divider"><td colSpan={21}></td></tr> }
+
               <tr className="shipping-list__section">
                 { section.name && <th colSpan={21}>{ section.name }</th> }
               </tr>
