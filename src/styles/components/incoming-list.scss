@@ -1,9 +1,27 @@
 .incoming-list {
+  position: relative;
+
   &__top-buttons {
     display: flex;
     gap: 0.3rem;
     margin-bottom: 0.5rem;
     justify-content: center;
+  }
+
+  &__top-right-buttons {
+    position: absolute;
+    top: 0.3rem;
+    right: 0;
+    display: flex;
+    gap: 0.3rem;
+    
+    img {
+      width: 0.8rem;
+    }
+
+    button {
+      padding: 0.3rem 0.34rem;
+    }
   }
 
   &__table-container {

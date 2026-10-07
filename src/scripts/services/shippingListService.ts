@@ -66,6 +66,15 @@ export const addShippingListRow = async (row: NewShippingListRow): Promise<numbe
   }
 };
 
+export const addIncomingRow = async () => {
+  try {
+    await api.post('/api/shipping-list/incoming', { socketId: socket.id });
+  } catch (error) {
+    handleError(error, 'addIncomingRow');
+    return null;
+  }
+};
+
 // === PUT routes === //
 
 export const editShippingList = async (row: ShippingListRow, field: keyof ShippingListRow) => {

@@ -3,7 +3,7 @@ import IncomingRow from "@/components/shippingList/incoming/IncomingRow";
 import useAutoSave from "@/hooks/useAutoSave";
 import { shippingListIncomingAtom } from "@/scripts/atoms/state";
 import { offServerEvent, onServerEvent, socket } from "@/scripts/config/websockets";
-import { editIncomingRow, getIncomingRow } from "@/scripts/services/shippingListService";
+import { addIncomingRow, editIncomingRow, getIncomingRow } from "@/scripts/services/shippingListService";
 import { Button, Pagination, Table } from "@midwest-diesel/mwd-ui";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -27,7 +27,7 @@ export default function IncomingPage() {
     const onEditIncomingRow = (data: { row?: IncomingRow, field?: keyof IncomingRow, socketId: string, user: string }) => {
       if (!data.row || !data.field) return;
 
-      if (data.field === 'received') {
+      if (data.field === 'received' || data.field === 'date') {
         setEditingUser({ id: data.row.id, field: data.field, user: data.user });
         refetch();
         return;
@@ -95,6 +95,11 @@ export default function IncomingPage() {
     );
   };
 
+  const onClickAddRow = async () => {
+    await addIncomingRow();
+    refetch();
+  };
+
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -115,6 +120,12 @@ export default function IncomingPage() {
             onClick={() => setSection('current')}
           >
             Current
+          </Button>
+        </div>
+
+        <div className="incoming-list__top-right-buttons">
+          <Button onClick={onClickAddRow}>
+            <img alt="Add" src="/images/icons/plus.svg" draggable={false} />
           </Button>
         </div>
 
