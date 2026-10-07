@@ -371,12 +371,6 @@ export default function Home() {
               <img alt="Save" src="/images/icons/save.svg" draggable={false} />
             </Button>
           }
-
-          <Button variant={['link']} className="shipping-list__system-btn">
-            <a href="/system">
-              <img alt="System" src="/images/icons/gear.svg" draggable={false} />
-            </a>
-          </Button>
         </div>
 
         <div className="shipping-list__top-buttons">

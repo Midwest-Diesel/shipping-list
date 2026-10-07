@@ -93,7 +93,7 @@ export default function ShippingListRow({ row, onEditRow, editingUser, refetch, 
   
 
   return (
-    <tr style={{ position: 'relative'}} className={className}>
+    <tr style={{ position: 'relative' }} className={className}>
       <td>
         <ShippingListInput row={row} field="createdBy" editingUser={editingUser}>
           <Input

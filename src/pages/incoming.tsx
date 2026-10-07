@@ -19,35 +19,24 @@ export default function IncomingPage() {
   const limit = 40;
 
   const { data, refetch } = useQuery<{ pageCount: number, rows: IncomingRow[] } | null>({
-    queryKey: ['data', section],
+    queryKey: ['data', section, page],
     queryFn: () => getIncomingRow({ page, limit, received: section === 'past' })
   });
 
   useEffect(() => {
     const onEditIncomingRow = (data: { row?: IncomingRow, field?: keyof IncomingRow, socketId: string, user: string }) => {
       if (!data.row || !data.field) return;
+
+      if (data.field === 'received') {
+        setEditingUser({ id: data.row.id, field: data.field, user: data.user });
+        refetch();
+        return;
+      }
+
       if (data.socketId === socket.id) return;
 
       setEditingUser({ id: data.row.id, field: data.field, user: data.user });
-
-      queryClient.setQueryData<{ pageCount: number, rows: IncomingRow[] } | null>(
-        ['data', section],
-        (currentData) => {
-          if (!currentData) return currentData;
-
-          return {
-            ...currentData,
-            rows: currentData.rows.map((row) =>
-              row.id === data.row!.id
-                ? {
-                    ...row,
-                    [data.field!]: data.row![data.field!]
-                  }
-                : row
-            )
-          };
-        }
-      );
+      refetch();
     };
 
     const onRefreshShippingList = (data?: { socketId: string }) => {
@@ -82,7 +71,7 @@ export default function IncomingPage() {
 
   const onEditRow = (id: number, field: keyof IncomingRow, value: unknown) => {
     queryClient.setQueryData<{ pageCount: number, rows: IncomingRow[] } | null>(
-      ['data', section],
+      ['data', section, page],
       (currentData) => {
         if (!currentData) return currentData;
 
@@ -131,40 +120,44 @@ export default function IncomingPage() {
 
         {data &&
           <>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Schedule Date</th>
-                  <th>Picked Up</th>
-                  <th>Carrier</th>
-                  <th>Company</th>
-                  <th>Tracking #</th>
-                  <th>Received</th>
-                  <th>EDD</th>
-                  <th>Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data?.rows.map((row) => {
-                  return (
-                    <IncomingRow
-                      key={row.id}
-                      row={row}
-                      onEditRow={onEditRow}
-                      editingUser={editingUser}
-                    />
-                  );
-                })}
-              </tbody>
-            </Table>
+            <div className="incoming-list__table-container">
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Schedule Date</th>
+                    <th>Picked Up</th>
+                    <th>Carrier</th>
+                    <th>Company</th>
+                    <th>Tracking #</th>
+                    <th>Received</th>
+                    <th>EDD</th>
+                    <th>Notes</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data?.rows.map((row) => {
+                    return (
+                      <IncomingRow
+                        key={row.id}
+                        row={row}
+                        onEditRow={onEditRow}
+                        editingUser={editingUser}
+                        refetch={refetch}
+                      />
+                    );
+                  })}
+                </tbody>
+              </Table>
 
-            <Pagination
-              data={data.rows}
-              setData={handleChangePage}
-              pageCount={data.pageCount}
-              pageSize={limit}
-              page={page}
-            />
+              <Pagination
+                data={data.rows}
+                setData={handleChangePage}
+                pageCount={data.pageCount}
+                pageSize={limit}
+                page={page}
+              />
+            </div>
           </>
         }
       </div>

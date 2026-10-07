@@ -45,7 +45,7 @@ export const getShippingList = async (date: Date): Promise<ShippingListSection[]
 
 export const getIncomingRow = async (params: { received: boolean, page: number, limit: number }): Promise<{ pageCount: number, rows: IncomingRow[] }> => {
   try {
-    const res = await api.get('/api/shipping-list/incoming', { params: { ...params, page: (params.page - 1) * params.limit } });
+    const res = await api.get('/api/shipping-list/incoming', { params: { ...params, offset: (params.page - 1) * params.limit } });
     const rows = res.data.rows.map((row: any) => ({ ...row, date: parseResDate(row.date), estimatedDeliveryDate: parseResDate(row.estimatedDeliveryDate) }));
     return { pageCount: res.data.pageCount, rows };
   } catch (error) {
@@ -103,5 +103,14 @@ export const deleteShippingListRow = async (id: number) => {
     await api.delete('/api/shipping-list', { params });
   } catch (error) {
     handleError(error, 'deleteShippingListRow');
+  }
+};
+
+export const deleteIncomingRow = async (id: number) => {
+  try {
+    const params = { id, socketId: socket.id };
+    await api.delete('/api/shipping-list/incoming', { params });
+  } catch (error) {
+    handleError(error, 'deleteIncomingRow');
   }
 };

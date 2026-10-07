@@ -6,6 +6,11 @@
     justify-content: center;
   }
 
+  &__table-container {
+    overflow-y: auto;
+    max-height: 85vh;
+  }
+
   table {
     color: var(--table-header-color);
     font-size: var(--font-xsm);

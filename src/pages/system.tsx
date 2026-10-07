@@ -55,13 +55,6 @@ export default function System() {
   return (
     <Layout title="System">
       <div className="system-page">
-        <Button
-          style={{ padding: '0.3rem', marginBottom: '0.5rem' }}
-          variant={['link', 'fit']}
-        >
-          <a href="/">Back</a>
-        </Button>
-
         <h3>v{ version }</h3>
         <p className="system-page__username">Logged in as <span>{ cap(user.username) }</span></p>
         <Button variant={['fit']} onClick={onClickChangeTheme}>{ theme === 'dark' ? 'Light' : 'Dark'} Mode</Button>
