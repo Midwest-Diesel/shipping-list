@@ -1,13 +1,15 @@
 import * as XLSX from 'xlsx';
 import { formatDate, formatShippingListWeightDims } from '../tools/stringUtils';
 import { handleError } from '../tools/utils';
+import { invoke } from '../config/tauri';
+import { getShippingList } from '../services/shippingListService';
 
 
 export const exportShippingList = async (sections: ShippingListSection[], date: Date): Promise<{ path: string, name: string } | null> => {
   try {
     const workbook = XLSX.utils.book_new();
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    const sectionOrder: (string | null)[] = [null, 'Fedex Small Pak', 'Misc', 'Will Call', 'Truck Lines'];
+    const sectionOrder: (string | null)[] = [null, 'UPS', 'Fedex Small Pak', 'Misc', 'Will Call', 'Truck Lines'];
     const monday = new Date(date);
     const day = monday.getDay();
     monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1));
@@ -96,7 +98,7 @@ export const exportShippingList = async (sections: ShippingListSection[], date: 
     const start = formatMonthDay(monday);
     const end = formatMonthDay(friday);
     const year = date.getFullYear();
-    const path = `\\\\MWD1-SERVER\\Server\\ShippingListFiles\\${year}`;
+    const path = `\\\\MWD1-SERVER\\Server\\ShippingListFiles${import.meta.env.DEV ? '\\development' : ''}\\${year}`;
     const name = `shippinglist_${start}-${end}-${year}.xlsx`;
 
     await XLSX.writeFile(workbook, name);
@@ -106,6 +108,40 @@ export const exportShippingList = async (sections: ShippingListSection[], date: 
     handleError(error, 'exportShippingList');
     return null;
   }
+};
+
+export const backupShippingList = async () => {
+  const date = new Date();
+  date.setDate(date.getDate() - 7);
+  const monday = new Date(date);
+  const day = monday.getDay();
+  monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1));
+  const friday = new Date(monday);
+  friday.setDate(monday.getDate() + 4);
+
+  const start = formatMonthDay(monday);
+  const end = formatMonthDay(friday);
+  const year = date.getFullYear();
+  const path = `\\\\MWD1-SERVER\\Server\\ShippingListFiles${import.meta.env.DEV ? '\\development' : ''}\\${year}`;
+  const latestBackup = await invoke('get_latest_backup_name', { args: { path }});
+  const currentWeek = `shippinglist_${start}-${end}-${year}.xlsx`;
+  if (latestBackup === currentWeek) return;
+  
+  const dates = Array.from({ length: 5 }, (_, index) => {
+    const currentDate = new Date(monday);
+    currentDate.setDate(monday.getDate() + index);
+    return currentDate;
+  });
+
+  const sections = (await Promise.all(
+    dates.map((date) => getShippingList(date))
+  )).flat();
+
+  const res = await exportShippingList(sections, date);
+  if (!res) return;
+
+  const args = { name: res.name, path: res.path };
+  await invoke('backup_shipping_list', { args });
 };
 
 const formatMonthDay = (date: Date) => {

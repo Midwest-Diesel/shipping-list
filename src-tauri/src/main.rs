@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::fs::{File, create_dir, remove_dir_all, remove_file};
+use std::fs::{self, File, create_dir, remove_dir_all, remove_file};
 use std::{process::Command, env};
 use std::{io::copy};
 use std::io::{self, Write};
@@ -18,6 +18,11 @@ struct BackupShippingListArgs {
   name: String
 }
 
+#[derive(Deserialize, Serialize)]
+struct LatestBackupNameArgs {
+  path: String
+}
+
 
 fn main() {
   dotenv::from_filename(".env.development").ok();
@@ -29,6 +34,7 @@ fn main() {
     .plugin(tauri_plugin_dialog::init())
     .invoke_handler(tauri::generate_handler![
       install_update,
+      get_latest_backup_name,
       backup_shipping_list
     ])
     .run(tauri::generate_context!())
@@ -121,6 +127,45 @@ async fn download_update() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tauri::command]
+fn get_latest_backup_name(args: LatestBackupNameArgs) -> Result<Option<String>, String> {
+  let target = std::path::Path::new(&args.path);
+  fs::create_dir_all(target).map_err(|e| e.to_string())?;
+  
+  let mut files = fs::read_dir(target)
+    .map_err(|e| e.to_string())?
+    .filter_map(|entry| entry.ok())
+    .filter_map(|entry| {
+      let metadata = entry.metadata().ok()?;
+      if !metadata.is_file() {
+        return None;
+      }
+
+      let name = entry.file_name();
+      let name_str = name.to_str()?;
+      let date_part = name_str.strip_prefix("shippinglist_")?.strip_suffix(".xlsx")?;
+      let (_, rest) = date_part.split_once('-')?;
+      let (week_end, year) = rest.split_once('-')?;
+
+      if week_end.len() != 4 || year.len() != 4 {
+        return None;
+      }
+
+      let date = chrono::NaiveDate::parse_from_str(
+        &format!("{}-{}-{}", year, &week_end[..2], &week_end[2..]),
+        "%Y-%m-%d",
+      )
+      .ok()?;
+
+      Some((name, date))
+    })
+    .collect::<Vec<_>>();
+
+  files.sort_by(|a, b| b.1.cmp(&a.1));
+
+  Ok(files.first().map(|(name, _)| name.to_string_lossy().into_owned()))
+}
+
+#[tauri::command]
 fn backup_shipping_list(args: BackupShippingListArgs) -> Result<(), String> {
   let downloads = dirs::download_dir().ok_or("Could not find Downloads directory")?;
   let source = downloads.join(&args.name);
@@ -197,7 +242,8 @@ fn backup_shipping_list(args: BackupShippingListArgs) -> Result<(), String> {
         End If
 
         If r.Column = 1 Then
-          If CStr(r.Value) = "Fedex Small Pak" Or _
+          If CStr(r.Value) = "UPS" Or _
+            CStr(r.Value) = "Fedex Small Pak" Or _
             CStr(r.Value) = "Misc" Or _
             CStr(r.Value) = "Will Call" Or _
             CStr(r.Value) = "Truck Lines" Then

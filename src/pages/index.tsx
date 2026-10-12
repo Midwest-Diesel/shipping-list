@@ -227,30 +227,6 @@ export default function Home() {
     });
   };
 
-  const onClickSaveList = async () => {
-    if (!await confirm('Create backup for current week?')) return;
-
-    const monday = new Date(date);
-    const day = monday.getDay();
-    monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1));
-
-    const dates = Array.from({ length: 5 }, (_, index) => {
-      const currentDate = new Date(monday);
-      currentDate.setDate(monday.getDate() + index);
-      return currentDate;
-    });
-
-    const sections = (await Promise.all(
-      dates.map((date) => getShippingList(date))
-    )).flat();
-
-    const res = await exportShippingList(sections, date);
-    if (!res) return;
-
-    const args = { name: res.name, path: res.path };
-    await invoke('backup_shipping_list', { args });
-  };
-
   const onEditWeightDims = async (row: ShippingListRow, weightDims: WeightDims[]) => {
     await editShippingList({ ...row, weightDims }, 'weightDims');
 
@@ -389,16 +365,6 @@ export default function Home() {
           >
             <img alt="Add" src="/images/icons/plus.svg" draggable={false} />
           </Button>
-
-          {user.type !== 'shop' &&
-            <Button
-              onClick={onClickSaveList}
-              onMouseEnter={() => tooltip.set('Backup')}
-              onMouseLeave={() => tooltip.set('')}
-            >
-              <img alt="Save" src="/images/icons/save.svg" draggable={false} />
-            </Button>
-          }
         </div>
 
         <div className="shipping-list__top-buttons">

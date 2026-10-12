@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import Navbar from "./Navbar";
+import { useAtom } from "jotai";
+import { userAtom } from "@/scripts/atoms/state";
 
 interface Props {
   children: React.ReactNode
@@ -8,6 +10,7 @@ interface Props {
 
 
 export function Layout({ children, title }: Props) {
+  const [user] = useAtom<User>(userAtom);
   const baseTitle = 'Shipping List';
 
   useEffect(() => {
@@ -41,7 +44,7 @@ export function Layout({ children, title }: Props) {
             </p>
           }
 
-          <Navbar />
+          { user.id && <Navbar /> }
           { children }
         </div>
       </div>
