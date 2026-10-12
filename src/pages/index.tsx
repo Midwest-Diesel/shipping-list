@@ -1,5 +1,5 @@
 import { Layout } from "../components/Layout";
-import { Button } from "@midwest-diesel/mwd-ui";
+import { Button, Input } from "@midwest-diesel/mwd-ui";
 import MoveShippingListRowDialog from "../components/shippingList/dialogs/MoveShipppingListRowDialog";
 import ShippingListTableEdit from "../components/shippingList/ShippingListTableEdit";
 import useAutoSave from "@/hooks/useAutoSave";
@@ -8,7 +8,7 @@ import { confirm, invoke } from "../scripts/config/tauri";
 import { offServerEvent, onServerEvent, socket } from "@/scripts/config/websockets";
 import { exportShippingList } from "@/scripts/logic/shippingList";
 import { addShippingListRow, editShippingList, editShippingListOrder, getShippingList } from "@/scripts/services/shippingListService";
-import { formatDate, formatWeightDims, getDay, parseWeightDims } from "@/scripts/tools/stringUtils";
+import { formatDate, formatWeightDims, getDay, parseDateInputValue, parseWeightDims } from "@/scripts/tools/stringUtils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
@@ -368,7 +368,20 @@ export default function Home() {
         </div>
 
         <div className="shipping-list__top-buttons">
-          <Button onClick={onClickChangeWeek}>{ week } Week</Button> |
+          <div className="shipping-list__top-buttons--weeks">
+            <Input
+              variant={['thin']}
+              value={parseDateInputValue(date)}
+              onChange={(e) => {
+                if (!e.target.value) return;
+                const [year, month, day] = e.target.value.split('-').map(Number);
+                setDate(new Date(year, month - 1, day));
+              }}
+              type="date"
+            />
+            <Button onClick={onClickChangeWeek}>{ week } Week</Button>
+            <span style={{ marginLeft: '0.65rem' }}>|</span>
+          </div>
 
           <div className="shipping-list__date-buttons">
             <Button style={getDay(date) === 'Monday' ? { color: 'var(--yellow-2)' } : {}} onClick={() => onClickChangeDate('Monday')}>

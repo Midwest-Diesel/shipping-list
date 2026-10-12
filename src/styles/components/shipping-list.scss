@@ -31,6 +31,15 @@
     gap: 1rem;
     margin-bottom: 0.5rem;
     justify-content: center;
+
+    input {
+      margin: 0;
+    }
+
+    &--weeks {
+      display: flex;
+      gap: 0.35rem;
+    }
   }
 
   &__date-buttons {
