@@ -81,6 +81,10 @@ export const editShippingList = async (row: ShippingListRow, field: keyof Shippi
   try {
     const payload = { ...row, weightDims: formatWeightDims(row.weightDims) };
     await api.put('/api/shipping-list', { ...payload, field, socketId: socket.id });
+
+    if (field === 'shipVia') {
+      await setHighestShippingListOrder(row.id, row.date, row.shipVia);
+    }
   } catch (error) {
     handleError(error, 'editShippingList');
   }
@@ -109,6 +113,14 @@ export const editShippingListRowCompleted = async (handwrittenId: number, isComp
     await api.patch('/api/shipping-list/complete', { handwrittenId, isComplete, socketId: socket.id });
   } catch (error) {
     handleError(error, 'editShippingListRowCompleted');
+  }
+};
+
+export const setHighestShippingListOrder = async (id: number, date: Date, shipVia: string) => {
+  try {
+    await api.patch('/api/shipping-list/highest-order', { id, date, shipVia, socketId: socket.id });
+  } catch (error) {
+    handleError(error, 'setHighestShippingListOrder');
   }
 };
 
